@@ -130,6 +130,7 @@ namespace ariel{
 
     };
 
+
 };
 
 #endif // FRACTION_HPP

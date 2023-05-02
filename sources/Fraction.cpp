@@ -6,10 +6,20 @@ using namespace std;
 namespace ariel
 {
 
-    // Default constructor
+    /**
+    Constructor for initializing a Fraction object with default values.
+    Sets the numerator to 0 and denominator to 1.
+    */
     Fraction::Fraction() : numerator(0), denominator(1) {}
 
-    // Constructor with numerator and denominator
+    /**
+    Constructs a Fraction object with the given numerator and denominator.
+    @param numerator The numerator of the fraction
+    @param denominator The denominator of the fraction
+    @throws std::invalid_argument If the denominator is 0
+    @post The created Fraction object will be in reduced form (i.e., with the greatest common divisor of the numerator and denominator factored out).
+    If the fraction is negative, then it will be represented with a negative numerator and positive denominator.
+    */
     Fraction::Fraction(int numerator, int denominator) : numerator(numerator), denominator(denominator)
     {
         if (denominator == 0)
@@ -24,14 +34,31 @@ namespace ariel
         reduce();
     }
 
-    // Constructor with a float value
+    /**
+     * Constructs a Fraction object from a floating-point number.
+     * @param num the floating-point number to convert to a fraction
+     * The numerator is set to num multiplied by 1000 and cast to an integer, while the denominator is set to 1000.
+     * The resulting fraction is then reduced to its simplest form.
+     */
     Fraction::Fraction(float num) : numerator(static_cast<int>(num * 1000)), denominator(1000)
     {
         reduce();
     }
 
+    /**
+     * Copy constructor for the Fraction class that takes a reference to another Fraction object other.
+     * It initializes the numerator and denominator member variables of the new Fraction object being
+     * constructed with the values of numerator and denominator of the other object.
+     */
     Fraction::Fraction(const Fraction &other) : numerator(other.numerator), denominator(other.denominator) {}
 
+    /**
+     * Move constructor.
+     * The move constructor takes an rvalue reference to another Fraction object (&&other) and initializes the
+     * new Fraction object's numerator and denominator with the values of the numerator and denominator of the other object.
+     * The noexcept specifier indicates that this function does not throw any exceptions.
+     * This move constructor is used to efficiently transfer ownership of a Fraction object from one location to another by avoiding unnecessary copying of its internal data.
+     */
     Fraction::Fraction(Fraction &&other) noexcept : numerator(other.numerator), denominator(other.denominator) {}
 
     Fraction &Fraction::operator=(const Fraction &other)
