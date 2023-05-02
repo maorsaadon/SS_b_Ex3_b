@@ -45,42 +45,6 @@ namespace ariel
         reduce();
     }
 
-    /**
-     * Copy constructor for the Fraction class that takes a reference to another Fraction object other.
-     * It initializes the numerator and denominator member variables of the new Fraction object being
-     * constructed with the values of numerator and denominator of the other object.
-     */
-    Fraction::Fraction(const Fraction &other) : numerator(other.numerator), denominator(other.denominator) {}
-
-    /**
-     * Move constructor.
-     * The move constructor takes an rvalue reference to another Fraction object (&&other) and initializes the
-     * new Fraction object's numerator and denominator with the values of the numerator and denominator of the other object.
-     * The noexcept specifier indicates that this function does not throw any exceptions.
-     * This move constructor is used to efficiently transfer ownership of a Fraction object from one location to another by avoiding unnecessary copying of its internal data.
-     */
-    Fraction::Fraction(Fraction &&other) noexcept : numerator(other.numerator), denominator(other.denominator) {}
-
-    Fraction &Fraction::operator=(const Fraction &other)
-    {
-        if (this == &other)
-            return *this;
-
-        this->numerator = other.numerator;
-        this->denominator = other.denominator;
-        return *this;
-    }
-
-    Fraction &Fraction::operator=(Fraction &&other) noexcept
-    {
-        if (this == &other)
-            return *this;
-
-        this->numerator = other.numerator;
-        this->denominator = other.denominator;
-        return *this;
-    }
-
     // Helper function to compute the greatest common divisor
     int Fraction::gcd(int a, int b) const
     {
@@ -289,7 +253,7 @@ namespace ariel
     }
 
     // Overloaded increment operator ++ (postfix)
-    Fraction Fraction::operator++(int)
+    const Fraction Fraction::operator++(int)
     {
         Fraction temp = *this;
         ++(*this);
@@ -305,7 +269,7 @@ namespace ariel
     }
 
     // Overloaded decrement operator -- (postfix)
-    Fraction Fraction::operator--(int)
+    const Fraction Fraction::operator--(int)
     {
         Fraction temp = *this;
         --(*this);

@@ -59,15 +59,6 @@ namespace ariel{
             Fraction();
             Fraction(int numerator, int denominator);
             Fraction(float num);
-            Fraction(const Fraction& other);
-            Fraction(Fraction&& other) noexcept;
-            
-            // //destructor
-            ~Fraction() = default;
-
-            Fraction& operator=(const Fraction& other);
-            Fraction& operator=(Fraction&& other) noexcept;
-
 
             // Overloaded operators for arithmetic operations
             const Fraction operator+(const Fraction& other) const;
@@ -113,9 +104,9 @@ namespace ariel{
 
             // Overloaded operators for increment and decrement operations
             Fraction operator++(); // pre-increment
-            Fraction operator++(int); // post-increment
+            const Fraction operator++(int); // post-increment
             Fraction operator--(); // pre-decrement
-            Fraction operator--(int); // post-decrement
+            const Fraction operator--(int); // post-decrement
 
             // Overloaded operators for input and output operations
             friend ostream& operator<<(ostream& output, const Fraction& fraction);
