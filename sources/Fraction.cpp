@@ -145,10 +145,11 @@ namespace ariel
     // Overloaded operator for equality
     bool Fraction::operator==(const Fraction &other) const
     {
-        const float bigOneThundend = 1000.0;
-        int a = static_cast<int>((static_cast<float>(numerator) / static_cast<float>(denominator)) * bigOneThundend);
-        int b = static_cast<int>((static_cast<float>(other.numerator) / static_cast<float>(other.denominator)) * bigOneThundend);
-        return a == b;
+        // const float bigOneThundend = 1000.0;
+        // int a = static_cast<int>((static_cast<float>(numerator) / static_cast<float>(denominator)) * bigOneThundend);
+        // int b = static_cast<int>((static_cast<float>(other.numerator) / static_cast<float>(other.denominator)) * bigOneThundend);
+        // return a == b;
+          return (numerator == other.numerator && denominator == other.denominator);
     }
 
     bool Fraction::operator==(const float &other) const
