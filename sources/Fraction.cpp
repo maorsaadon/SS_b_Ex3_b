@@ -1,3 +1,4 @@
+
 #include "Fraction.hpp"
 #include <cmath>
 
@@ -5,6 +6,43 @@ using namespace std;
 
 namespace ariel
 {
+    static const int max_int = numeric_limits<int>::max();
+    static const int min_int = numeric_limits<int>::min();
+    
+    static int overflow_check(int num1, int num2, char c) {
+        switch (c)
+        {
+        case '+':
+            if ((num2 > 0 && num1 > (max_int - num2)) || (num2 < 0 && num1 < (min_int - num2)))
+            {
+                throw overflow_error("Overflow");
+            }
+            return (num1 + num2);
+        
+        case '-':
+            if ((num2 < 0 && num1 > max_int + num2) || (num2 > 0 && num1 < min_int + num2))
+            {
+                throw overflow_error("Overflow");
+            }
+            return (num1 - num2);
+        case '*':
+            if ((num2 > 0 && num1 > max_int / num2) || (num2 < 0 && num1 < max_int / num2))
+            {
+                throw overflow_error("Overflow");
+            }
+            return (num1 * num2);
+        default:
+            return 1;
+        }   
+                    
+    }
+
+    // Helper function to compute the greatest common divisor
+    int gcd(int a, int b)
+    {
+        return (b == 0) ? a : gcd(b, a % b);
+    }
+
 
     /**
     Constructor for initializing a Fraction object with default values.
@@ -70,11 +108,6 @@ namespace ariel
     }
 
 
-    // Helper function to compute the greatest common divisor
-    int Fraction::gcd(int a, int b) const
-    {
-        return (b == 0) ? a : gcd(b, a % b);
-    }
 
     // Helper function to reduce the fraction
     void Fraction::reduce()
@@ -84,186 +117,72 @@ namespace ariel
             numerator = -numerator;
             denominator = -denominator;
         }
-        int gcd = abs(this->gcd(numerator, denominator));
-        numerator /= gcd;
-        denominator /= gcd;
+        int my_gcd = abs(gcd(numerator, denominator));
+        numerator /= my_gcd;
+        denominator /= my_gcd;
     }
 
-    // Overloaded operator for addition
-    const Fraction Fraction::operator+(const Fraction &other) const
-    {
-        int lcm = abs(denominator * other.denominator / gcd(denominator, other.denominator));
-        int num1 = numerator * (lcm / denominator);
-        int num2 = other.numerator * (lcm / other.denominator);
-        return Fraction(overflow_addition(num1, num2), lcm);
+    // Friend function for operator+ 
+    const Fraction operator+(const Fraction &num1, const Fraction &num2){
+        int lcm = abs(num1.denominator * num2.denominator / gcd(num1.denominator, num2.denominator));
+        int num_1 = num1.numerator * (lcm / num1.denominator);
+        int num_2 = num2.numerator * (lcm / num2.denominator);
+        return Fraction(overflow_check(num_1, num_2, '+'), lcm);
     }
 
-    const Fraction Fraction::operator+(const float &other) const
-    {
-        return *this + Fraction(other);
+    // Friend function for operator-
+    const Fraction operator-(const Fraction &num1, const Fraction &num2){
+        int lcm = abs(num1.denominator * num2.denominator / gcd(num1.denominator, num2.denominator));
+        int num_1 = num1.numerator * (lcm / num1.denominator);
+        int num_2 = num2.numerator * (lcm / num2.denominator);
+        return Fraction(overflow_check(num_1, num_2, '-'), lcm);
     }
 
-    // Friend function for operator+ with float as the first operand
-    const Fraction operator+(const float &num1, const Fraction &num2)
-    {
-        return Fraction(num1) + num2;
+    // Friend function for operator*
+    const Fraction operator*(const Fraction &num1, const Fraction &num2){
+        return Fraction(overflow_check(num1.numerator, num2.numerator, '*'), overflow_check(num1.denominator, num2.denominator, '*'));
     }
 
-    // Overloaded operator for subtraction
-    const Fraction Fraction::operator-(const Fraction &other) const
-    {
-        int lcm = abs(denominator * other.denominator / gcd(denominator, other.denominator));
-        int num1 = numerator * (lcm / denominator);
-        int num2 = other.numerator * (lcm / other.denominator);
-        return Fraction(overflow_subtraction(num1, num2), lcm);
-    }
-
-    const Fraction Fraction::operator-(const float &other) const
-    {
-        return *this - Fraction(other);
-    }
-
-    // Friend function for operator- with float as the first operand
-    const Fraction operator-(const float &num1, const Fraction &num2)
-    {
-        return Fraction(num1) - num2;
-    }
-
-    // Overloaded operator for multiplication
-    const Fraction Fraction::operator*(const Fraction &other) const
-    {
-        return Fraction(overflow_multiplication(numerator, other.numerator), overflow_multiplication(denominator, other.denominator));
-    }
-
-    const Fraction Fraction::operator*(const float &other) const
-    {
-        return *this * Fraction(other);
-    }
-
-    // Friend function for operator* with float as the first operand
-    const Fraction operator*(const float &num1, const Fraction &num2)
-    {
-        return Fraction(num1) * num2;
-    }
-
-    // Overloaded operator for division
-    const Fraction Fraction::operator/(const Fraction &other) const
-    {
-        if (other.numerator == 0)
+    // Friend function for operator/
+    const Fraction operator/(const Fraction &num1, const Fraction &num2){
+         if (num2.numerator == 0)
         {
             throw runtime_error("Cannot divide by zero.");
         }
-        return Fraction(overflow_multiplication(numerator, other.denominator), overflow_multiplication(denominator, other.numerator));
+        return Fraction(overflow_check(num1.numerator, num2.denominator, '*'), overflow_check(num1.denominator, num2.numerator, '*'));
     }
 
-    const Fraction Fraction::operator/(const float &other) const
-    {
-        return *this / Fraction(other);
+    // Friend function for operator==
+    bool operator==(const Fraction &num1, const Fraction &num2){
+       return (num1.numerator == num2.numerator && num1.denominator == num2.denominator);
+    }
+    
+    // Friend function for operator!=
+    bool operator!=(const Fraction &num1, const Fraction &num2){
+        return !(num1 == num2);
+    }
+    
+    // Friend function for operator>
+    bool operator>(const Fraction &num1, const Fraction &num2){
+        int lcm = abs(num1.denominator * num2.denominator / gcd(num1.denominator, num2.denominator));
+        int num_1 = num1.numerator * (lcm / num1.denominator);
+        int num_2 = num2.numerator * (lcm / num2.denominator);
+        return num_1 > num_2;
     }
 
-    // Friend function for operator+ with float as the first operand
-    const Fraction operator/(const float &num1, const Fraction &num2)
-    {
-        return Fraction(num1) / num2;
+    // Friend function for operator<
+    bool operator<(const Fraction &num1, const Fraction &num2){
+       return !(num1 > num2 || num1 == num2);
     }
 
-    // Overloaded operator for equality
-    bool Fraction::operator==(const Fraction &other) const
-    {
-          return (numerator == other.numerator && denominator == other.denominator);
+    // Friend function for operator>=
+    bool operator>=(const Fraction &num1, const Fraction &num2){
+        return (num1.numerator * num2.denominator) >= (num1.denominator * num2.numerator);
     }
 
-    bool Fraction::operator==(const float &other) const
-    {
-        return *this == Fraction(other);
-    }
-
-    bool operator==(const float &num1, const Fraction &num2)
-    {
-        return Fraction(num1) == num2;
-    }
-
-    // Overloaded operator for inequality
-    bool Fraction::operator!=(const Fraction &other) const
-    {
-        return !(*this == other);
-    }
-
-    bool Fraction::operator!=(const float &other) const
-    {
-        return *this != Fraction(other);
-    }
-
-    bool operator!=(const float &num1, const Fraction &num2)
-    {
-        return Fraction(num1) != num2;
-    }
-
-    // Overloaded operator for greater than
-    bool Fraction::operator>(const Fraction &other) const
-    {
-        int lcm = abs(denominator * other.denominator / gcd(denominator, other.denominator));
-        int num1 = numerator * (lcm / denominator);
-        int num2 = other.numerator * (lcm / other.denominator);
-        return num1 > num2;
-    }
-
-    bool Fraction::operator>(const float &other) const
-    {
-        return *this > Fraction(other);
-    }
-
-    bool operator>(const float &num1, const Fraction &num2)
-    {
-        return Fraction(num1) > num2;
-    }
-
-    // Overloaded operator for less than
-    bool Fraction::operator<(const Fraction &other) const
-    {
-        return !(*this > other || *this == other);
-    }
-
-    bool Fraction::operator<(const float &other) const
-    {
-        return *this < Fraction(other);
-    }
-
-    bool operator<(const float &num1, const Fraction &num2)
-    {
-        return Fraction(num1) < num2;
-    }
-
-    // Overloaded comparison operator >=
-    bool Fraction::operator>=(const Fraction &other) const
-    {
-        return (numerator * other.denominator) >= (denominator * other.numerator);
-    }
-
-    bool Fraction::operator>=(const float &other) const
-    {
-        return *this >= Fraction(other);
-    }
-
-    bool operator>=(const float &num1, const Fraction &num2)
-    {
-        return Fraction(num1) >= num2;
-    }
-
-    // Overloaded comparison operator <=
-    bool Fraction::operator<=(const Fraction &other) const
-    {
-        return (numerator * other.denominator) <= (denominator * other.numerator);
-    }
-
-    bool Fraction::operator<=(const float &other) const
-    {
-        return *this <= Fraction(other);
-    }
-
-    bool operator<=(const float &num1, const Fraction &num2)
-    {
-        return Fraction(num1) <= num2;
+    // Friend function for operator<=
+    bool operator<=(const Fraction &num1, const Fraction &num2){
+        return (num1.numerator * num2.denominator) <= (num1.denominator * num2.numerator);
     }
 
     // Overloaded increment operator ++
@@ -353,4 +272,3 @@ namespace ariel
     }
 
 };
-
