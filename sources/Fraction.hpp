@@ -9,14 +9,14 @@
 
 using namespace std;
 
-namespace ariel{
+namespace ariel{ 
     class Fraction {
         private:
             int numerator;
             int denominator;
             static const int max_int = numeric_limits<int>::max();
             static const int min_int = numeric_limits<int>::min();
-
+        
             // Helper function to reduce the fraction
             void reduce();
             // Helper function to compute the greatest common divisor
@@ -59,6 +59,14 @@ namespace ariel{
             Fraction();
             Fraction(int numerator, int denominator);
             Fraction(float num);
+            Fraction(const Fraction& other);
+            Fraction(Fraction&& other) noexcept;
+            
+            // //destructor
+            ~Fraction() = default;
+
+            Fraction& operator=(const Fraction& other);
+            Fraction& operator=(Fraction&& other) noexcept;
 
             // Overloaded operators for arithmetic operations
             const Fraction operator+(const Fraction& other) const;
@@ -125,4 +133,5 @@ namespace ariel{
 };
 
 #endif // FRACTION_HPP
+
 

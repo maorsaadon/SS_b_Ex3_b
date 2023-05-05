@@ -45,6 +45,31 @@ namespace ariel
         reduce();
     }
 
+    Fraction::Fraction(const Fraction &other) : numerator(other.numerator), denominator(other.denominator) {}
+
+    Fraction::Fraction(Fraction &&other) noexcept : numerator(other.numerator), denominator(other.denominator) {}
+
+    Fraction &Fraction::operator=(const Fraction &other)
+    {
+        if (this == &other)
+            return *this;
+
+        this->numerator = other.numerator;
+        this->denominator = other.denominator;
+        return *this;
+    }
+
+    Fraction &Fraction::operator=(Fraction &&other) noexcept
+    {
+        if (this == &other)
+            return *this;
+
+        this->numerator = other.numerator;
+        this->denominator = other.denominator;
+        return *this;
+    }
+
+
     // Helper function to compute the greatest common divisor
     int Fraction::gcd(int a, int b) const
     {
@@ -145,10 +170,6 @@ namespace ariel
     // Overloaded operator for equality
     bool Fraction::operator==(const Fraction &other) const
     {
-        // const float bigOneThundend = 1000.0;
-        // int a = static_cast<int>((static_cast<float>(numerator) / static_cast<float>(denominator)) * bigOneThundend);
-        // int b = static_cast<int>((static_cast<float>(other.numerator) / static_cast<float>(other.denominator)) * bigOneThundend);
-        // return a == b;
           return (numerator == other.numerator && denominator == other.denominator);
     }
 
@@ -332,3 +353,4 @@ namespace ariel
     }
 
 };
+
