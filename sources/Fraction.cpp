@@ -6,9 +6,11 @@ using namespace std;
 
 namespace ariel
 {
+    // Constants for maximum and minimum integer values
     static const int max_int = numeric_limits<int>::max();
     static const int min_int = numeric_limits<int>::min();
     
+    // Helper function to check for integer overflow
     static int overflow_check(int num1, int num2, char c) {
         switch (c)
         {
@@ -83,10 +85,22 @@ namespace ariel
         reduce();
     }
 
+    /**
+     * Copy constructor for the Fraction class.
+     * @param other The Fraction object to copy.
+     */
     Fraction::Fraction(const Fraction &other) : numerator(other.numerator), denominator(other.denominator) {}
 
+    /**
+     * Move constructor for the Fraction class.
+     * @param other The Fraction object to move.
+     */
     Fraction::Fraction(Fraction &&other) noexcept : numerator(other.numerator), denominator(other.denominator) {}
 
+    /**
+     * This is the assignment operator, which assigns the values of the given Fraction object to the current object. 
+     * It returns a reference to the current object after assignment.
+    */
     Fraction &Fraction::operator=(const Fraction &other)
     {
         if (this == &other)
@@ -97,6 +111,10 @@ namespace ariel
         return *this;
     }
 
+    /**
+     * This is the move assignment operator, which moves the values of the given Fraction object to the current object. 
+     * It returns a reference to the current object after move.
+    */
     Fraction &Fraction::operator=(Fraction &&other) noexcept
     {
         if (this == &other)
@@ -109,7 +127,10 @@ namespace ariel
 
 
 
-    // Helper function to reduce the fraction
+    /**
+     * This is a helper function that reduces the current fraction to its simplest form by dividing both numerator 
+     * and denominator by their greatest common divisor.
+    */
     void Fraction::reduce()
     {
         if (denominator < 0)
@@ -122,7 +143,10 @@ namespace ariel
         denominator /= my_gcd;
     }
 
-    // Friend function for operator+ 
+    /**
+     * This is a friend function that overloads the + operator for Fraction objects. 
+     * It adds two fractions and returns the result as a new Fraction object.
+    */
     const Fraction operator+(const Fraction &num1, const Fraction &num2){
         int lcm = abs(num1.denominator * num2.denominator / gcd(num1.denominator, num2.denominator));
         int num_1 = num1.numerator * (lcm / num1.denominator);
@@ -130,7 +154,10 @@ namespace ariel
         return Fraction(overflow_check(num_1, num_2, '+'), lcm);
     }
 
-    // Friend function for operator-
+    /**
+     * This is a friend function that overloads the - operator for Fraction objects. 
+     * It subtracts one fraction from another and returns the result as a new Fraction object.
+    */
     const Fraction operator-(const Fraction &num1, const Fraction &num2){
         int lcm = abs(num1.denominator * num2.denominator / gcd(num1.denominator, num2.denominator));
         int num_1 = num1.numerator * (lcm / num1.denominator);
@@ -138,12 +165,18 @@ namespace ariel
         return Fraction(overflow_check(num_1, num_2, '-'), lcm);
     }
 
-    // Friend function for operator*
+    /**
+     * This is a friend function that overloads the * operator for Fraction objects. 
+     * It multiplies two fractions and returns the result as a new Fraction object.
+    */
     const Fraction operator*(const Fraction &num1, const Fraction &num2){
         return Fraction(overflow_check(num1.numerator, num2.numerator, '*'), overflow_check(num1.denominator, num2.denominator, '*'));
     }
 
-    // Friend function for operator/
+    /**
+     * This is a friend function that overloads the / operator for Fraction objects. 
+     * It divides one fraction by another and returns the result as a new Fraction object.
+    */
     const Fraction operator/(const Fraction &num1, const Fraction &num2){
          if (num2.numerator == 0)
         {
@@ -152,17 +185,26 @@ namespace ariel
         return Fraction(overflow_check(num1.numerator, num2.denominator, '*'), overflow_check(num1.denominator, num2.numerator, '*'));
     }
 
-    // Friend function for operator==
+    /**
+     * This is a friend function that overloads the == operator for Fraction objects. 
+     * It checks if two fractions are equal and returns true if they are, otherwise false.
+    */
     bool operator==(const Fraction &num1, const Fraction &num2){
        return (num1.numerator == num2.numerator && num1.denominator == num2.denominator);
     }
     
-    // Friend function for operator!=
+    /**
+     *  This is a friend function that overloads the != operator for Fraction objects. 
+     * It checks if two fractions are not equal and returns true if they are not, otherwise false.
+    */
     bool operator!=(const Fraction &num1, const Fraction &num2){
         return !(num1 == num2);
     }
     
-    // Friend function for operator>
+    /**
+     * This is a friend function that overloads the > operator for Fraction objects. 
+     * It checks if the first fraction is greater than the second fraction and returns true if it is, otherwise false.
+    */
     bool operator>(const Fraction &num1, const Fraction &num2){
         int lcm = abs(num1.denominator * num2.denominator / gcd(num1.denominator, num2.denominator));
         int num_1 = num1.numerator * (lcm / num1.denominator);
@@ -170,17 +212,26 @@ namespace ariel
         return num_1 > num_2;
     }
 
-    // Friend function for operator<
+    /**
+     * This is a friend function that overloads the < operator for Fraction objects. 
+     * It checks if the first fraction is less than the second fraction and returns true if it is, otherwise false.
+    */
     bool operator<(const Fraction &num1, const Fraction &num2){
        return !(num1 > num2 || num1 == num2);
     }
 
-    // Friend function for operator>=
+    /**
+     * This is a friend function that overloads the >= operator for Fraction objects. 
+     * It checks if the first fraction is greater than or equal to the second fraction and returns true if it is, otherwise false.
+    */
     bool operator>=(const Fraction &num1, const Fraction &num2){
         return (num1.numerator * num2.denominator) >= (num1.denominator * num2.numerator);
     }
 
-    // Friend function for operator<=
+    /**
+     * This is a friend function that overloads the <= operator for Fraction objects. 
+     * It checks if the first fraction is less than or equal to the second fraction and returns true if it is, otherwise false.
+    */
     bool operator<=(const Fraction &num1, const Fraction &num2){
         return (num1.numerator * num2.denominator) <= (num1.denominator * num2.numerator);
     }
