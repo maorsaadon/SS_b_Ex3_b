@@ -8,12 +8,12 @@ using namespace std;
 namespace ariel
 {
     // Helper function to check for integer overflow
-    int overflow_check(int num1, int num2, char c)
+    int overflow_check(int num1, int num2, char op)
     {
         const int max_int = numeric_limits<int>::max();
         const int min_int = numeric_limits<int>::min();
 
-        switch (c)
+        switch (op)
         {
         case '+':
             if ((num2 > 0 && num1 > (max_int - num2)) || (num2 < 0 && num1 < (min_int - num2)))
