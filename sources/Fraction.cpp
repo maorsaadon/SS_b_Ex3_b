@@ -7,13 +7,12 @@ using namespace std;
 
 namespace ariel
 {
-    // Constants for maximum and minimum integer values
-    static const int max_int = numeric_limits<int>::max();
-    static const int min_int = numeric_limits<int>::min();
-
     // Helper function to check for integer overflow
-    static int overflow_check(int num1, int num2, char c)
+    int overflow_check(int num1, int num2, char c)
     {
+        const int max_int = numeric_limits<int>::max();
+        const int min_int = numeric_limits<int>::min();
+
         switch (c)
         {
         case '+':
