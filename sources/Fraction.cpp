@@ -306,21 +306,4 @@ namespace ariel
         return denominator;
     }
 
-    // Setter for numerator
-    void Fraction::setNumerator(int numerator)
-    {
-        this->numerator = numerator;
-    }
-
-    // Setter for denominator
-    void Fraction::setDenominator(int denominator)
-    {
-        if (denominator == 0)
-        {
-            throw invalid_argument("Denominator cannot be zero");
-        }
-        this->denominator = denominator;
-        reduce();
-    }
-
 };
