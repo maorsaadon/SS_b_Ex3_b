@@ -140,7 +140,7 @@ namespace ariel
      */
     const Fraction operator+(const Fraction &num1, const Fraction &num2)
     {
-        int lcm = abs(num1.denominator * num2.denominator / gcd(num1.denominator, num2.denominator));
+        int lcm = abs(overflow_check(num1.denominator, num2.denominator, '*') / gcd(num1.denominator, num2.denominator));
         int num_1 = num1.numerator * (lcm / num1.denominator);
         int num_2 = num2.numerator * (lcm / num2.denominator);
         return Fraction(overflow_check(num_1, num_2, '+'), lcm);
