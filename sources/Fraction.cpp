@@ -7,33 +7,64 @@ using namespace std;
 
 namespace ariel
 {
-    // Helper function to check for integer overflow
+    // // Helper function to check for integer overflow
+    // int overflow_check(int num1, int num2, char op)
+    // {
+    //     const int max_int = numeric_limits<int>::max();
+    //     const int min_int = numeric_limits<int>::min();
+
+    //     switch (op)
+    //     {
+    //     case '+':
+    //         if ((num2 > 0 && num1 > (max_int - num2)) || (num2 < 0 && num1 < (min_int - num2)))
+    //         {
+    //             throw overflow_error("Overflow");
+    //         }
+    //         return (num1 + num2);
+
+    //     case '-':
+    //         if ((num2 < 0 && num1 > max_int + num2) || (num2 > 0 && num1 < min_int + num2))
+    //         {
+    //             throw overflow_error("Overflow");
+    //         }
+    //         return (num1 - num2);
+    //     case '*':
+    //         if ((num2 > 0 && num1 > max_int / num2) || (num2 < 0 && num1 < max_int / num2))
+    //         {
+    //             throw overflow_error("Overflow");
+    //         }
+    //         return (num1 * num2);
+    //     default:
+    //         return 1;
+    //     }
+    // }
+
     int overflow_check(int num1, int num2, char op)
     {
         const int max_int = numeric_limits<int>::max();
         const int min_int = numeric_limits<int>::min();
 
+        long long new_num1 = static_cast<long long>(num1);
+        long long new_num2 = static_cast<long long>(num2);
+
         switch (op)
         {
         case '+':
-            if ((num2 > 0 && num1 > (max_int - num2)) || (num2 < 0 && num1 < (min_int - num2)))
-            {
-                throw overflow_error("Overflow");
-            }
-            return (num1 + num2);
+                if (new_num1 + new_num2 > max_int || (new_num1 + new_num2) < min_int)
+                    throw overflow_error("Overflow");
 
+                return (num1 + num2);
+            
         case '-':
-            if ((num2 < 0 && num1 > max_int + num2) || (num2 > 0 && num1 < min_int + num2))
-            {
-                throw overflow_error("Overflow");
-            }
-            return (num1 - num2);
+             if ((new_num1 - new_num2 )> max_int || (new_num1 - new_num2) < min_int)
+                    throw overflow_error("Overflow");
+
+                return (num1 - num2);
         case '*':
-            if ((num2 > 0 && num1 > max_int / num2) || (num2 < 0 && num1 < max_int / num2))
-            {
-                throw overflow_error("Overflow");
-            }
-            return (num1 * num2);
+             if (new_num1 * new_num2 > max_int || (new_num1 * new_num2) < min_int)
+                    throw overflow_error("Overflow");
+
+                return (num1 * num2);
         default:
             return 1;
         }
@@ -57,12 +88,12 @@ namespace ariel
     {
         if (denominator == 0)
         {
-            throw invalid_argument("Denominator cannot be zero.");
+                throw invalid_argument("Denominator cannot be zero.");
         }
         if (denominator < 0)
         {
-            numerator *= -1;
-            denominator *= -1;
+                numerator *= -1;
+                denominator *= -1;
         }
         reduce();
     }
@@ -97,7 +128,7 @@ namespace ariel
     Fraction &Fraction::operator=(const Fraction &other)
     {
         if (this == &other)
-            return *this;
+                return *this;
 
         this->numerator = other.numerator;
         this->denominator = other.denominator;
@@ -111,7 +142,7 @@ namespace ariel
     Fraction &Fraction::operator=(Fraction &&other) noexcept
     {
         if (this == &other)
-            return *this;
+                return *this;
 
         this->numerator = other.numerator;
         this->denominator = other.denominator;
@@ -126,8 +157,8 @@ namespace ariel
     {
         if (denominator < 0)
         {
-            numerator = -numerator;
-            denominator = -denominator;
+                numerator = -numerator;
+                denominator = -denominator;
         }
         int my_gcd = abs(gcd(numerator, denominator));
         numerator /= my_gcd;
@@ -141,8 +172,8 @@ namespace ariel
     const Fraction operator+(const Fraction &num1, const Fraction &num2)
     {
         int lcm = abs(overflow_check(num1.denominator, num2.denominator, '*') / gcd(num1.denominator, num2.denominator));
-        int num_1 = num1.numerator * (lcm / num1.denominator);
-        int num_2 = num2.numerator * (lcm / num2.denominator);
+        int num_1 = overflow_check(num1.numerator ,(lcm / num1.denominator), '*');
+        int num_2 = overflow_check(num2.numerator ,(lcm / num2.denominator), '*');
         return Fraction(overflow_check(num_1, num_2, '+'), lcm);
     }
 
@@ -153,8 +184,8 @@ namespace ariel
     const Fraction operator-(const Fraction &num1, const Fraction &num2)
     {
         int lcm = abs(num1.denominator * num2.denominator / gcd(num1.denominator, num2.denominator));
-        int num_1 = num1.numerator * (lcm / num1.denominator);
-        int num_2 = num2.numerator * (lcm / num2.denominator);
+        int num_1 = overflow_check(num1.numerator, (lcm / num1.denominator), '*');
+        int num_2 = overflow_check(num2.numerator, (lcm / num2.denominator), '*');
         return Fraction(overflow_check(num_1, num_2, '-'), lcm);
     }
 
@@ -175,7 +206,7 @@ namespace ariel
     {
         if (num2.numerator == 0)
         {
-            throw runtime_error("Cannot divide by zero.");
+                throw runtime_error("Cannot divide by zero.");
         }
         return Fraction(overflow_check(num1.numerator, num2.denominator, '*'), overflow_check(num1.denominator, num2.numerator, '*'));
     }
@@ -283,12 +314,12 @@ namespace ariel
 
         if (input.fail())
         {
-            throw runtime_error("Input error");
+                throw runtime_error("Input error");
         }
 
         if (fraction.denominator == 0)
         {
-            throw runtime_error("Denominator cannot be zero");
+                throw runtime_error("Denominator cannot be zero");
         }
         fraction.reduce();
         return input;
